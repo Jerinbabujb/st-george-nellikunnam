@@ -325,6 +325,24 @@ app.get('/api/public/organization',async(req,res)=>{
 })
 
 
+app.get('/api/admin/count',async (req,res)=>{
+  try{
+    const [membersCount, orgsCount, servicesCount, noticesCount]= await Promise.all([
+      prisma.User.count(),
+      prisma.organizations.count(),
+      prisma.services.count(),
+      prisma.notice.count()
+    ]);
+    res.json({members:membersCount,
+      organization:orgsCount,
+      services:servicesCount,
+      notices:noticesCount
+    });
+  }
+  catch(error){
+    res.status(500).json("server issue");
+  }
+})
 
 
 

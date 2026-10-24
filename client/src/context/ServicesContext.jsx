@@ -123,6 +123,21 @@ const get_organizations = async () => {
         throw error; // Re-throw the error so the caller can handle it (e.g., show a UI alert)
     }
 }
-return <ServicesContext.Provider value={{add_notice,add_services,add_organizations,get_notices, get_services, get_organizations}}>{children}</ServicesContext.Provider>
+
+const get_Counts = async()=>{
+    try{
+        const data = await request("/admin/count");
+        if(data){
+            return data;
+        }
+        else{
+            console.log("counts data missing");
+        }
+    }
+    catch(error){
+        console.log(error);
+    }
+}
+return <ServicesContext.Provider value={{add_notice,add_services,add_organizations,get_notices, get_services, get_organizations, get_Counts}}>{children}</ServicesContext.Provider>
 }
 

@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, CalendarDays, Clock3, MapPin } from 'lucide-react';
-import { request } from '../api';
+import { ArrowRight, Clock3, MapPin } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { ServicesContext } from '../context/ServicesContext';
 

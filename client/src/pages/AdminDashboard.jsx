@@ -13,7 +13,7 @@ const empty = {
 
 export default function AdminDashboard() {
   const { add_members, get_members } = useContext(AuthContext);
-  const { add_notice,add_services, add_organizations ,get_notices, get_services, get_organizations} = useContext(ServicesContext);
+  const { add_notice,add_services, add_organizations ,get_notices, get_services, get_organizations, get_Counts} = useContext(ServicesContext);
   const { t } = useLanguage();
   const [tab, setTab] = useState('overview');
   const [stats, setStats] = useState({});
@@ -24,10 +24,17 @@ export default function AdminDashboard() {
   const [memberForm, setMemberForm] = useState({ name: '', name_ml: '', email: '', phone: '', ward: '', house: '', password: 'Member@123', roll_no: '', family: [] });
   const [message, setMessage] = useState('');
 
-  const loadStats = () => request('/admin/stats').then(setStats);
-  const loadMembers = () => request('/admin/members').then(d => setMembers(d.members || []));
+  // const loadStats = () => request('/admin/stats').then(setStats);
+  // const loadMembers = () => request('/admin/members').then(d => setMembers(d.members || []));
   // const loadCollection = async collection => { const d = await request(`/admin/${collection}`); setItems(d.items || []); setForm({ ...empty[collection] }); setEditId(null); };
 
+  useEffect(()=>{
+ const fetchCount=async()=>{
+  const countData= await get_Counts();
+  setStats(countData);
+ }
+ fetchCount();
+  },[])
   const add_notices = async (e) => {
     e.preventDefault();
     await add_notice(form);
@@ -142,7 +149,7 @@ export default function AdminDashboard() {
 
       {tab === 'overview' && (
         <div className="stats-grid">
-          {[['Members', stats.members || 0], ['Family Profiles', stats.families || 0], ['Announcements', stats.announcements || 0], ['Service Timings', stats.services || 0], ['Organizations', stats.organizations || 0]].map(([k, v]) => (
+          {[['Members', stats.members || 0],  ['Announcements', stats.notices || 0], ['Service Timings', stats.services || 0], ['Organizations', stats.organization || 0]].map(([k, v]) => (
             <div className="stat-card" key={k}><span>{k}</span><strong>{v}</strong></div>
           ))}
         </div>
