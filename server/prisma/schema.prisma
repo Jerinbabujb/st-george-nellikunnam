@@ -22,6 +22,7 @@ model User{
   ward   String?
   phone   String
   house    String
+  image_url    String?
   family   Json?
   createdAt  DateTime   @default(now())
 }

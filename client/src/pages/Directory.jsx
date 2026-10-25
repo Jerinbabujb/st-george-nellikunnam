@@ -10,7 +10,7 @@ export default function Directory() {
   const [members, setMembers] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedWard, setSelectedWard] = useState('All');
-  
+  const [lightboxImage, setLightboxImage] = useState(null);
   // NEW: State to track which family cards are expanded
   const [expandedCards, setExpandedCards] = useState({}); 
 
@@ -107,7 +107,13 @@ export default function Directory() {
             return (
               <article className="family-card" key={member.id}>
                 <div className="member-avatar">
-                  {displayName.charAt(0).toUpperCase()}
+                  {member.image_url?(
+                <img src={member.image_url} onClick={()=>setLightboxImage(member.image_url)} style={{ width: '100%', height: '100%', objectFit: 'cover', cursor:'pointer' }}/>  
+          ):(
+             displayName.charAt(0).toUpperCase()
+          )
+                }
+                  
                 </div>
                 
                 <div>
@@ -175,6 +181,55 @@ export default function Directory() {
             );
           })}
         </div>
+        {/* --- LIGHTBOX OVERLAY --- */}
+{lightboxImage && (
+  <div 
+    onClick={() => setLightboxImage(null)} // Close when clicking background
+    style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      width: '100vw',
+      height: '100vh',
+      backgroundColor: 'rgba(0, 0, 0, 0.8)',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      zIndex: 9999, // Ensures it stays on top of everything
+      cursor: 'zoom-out'
+    }}
+  >
+    <img 
+      src={lightboxImage} 
+      alt="Expanded view" 
+      onClick={(e) => e.stopPropagation()} // Prevent clicking image from closing it
+      style={{
+        maxWidth: '90%',
+        maxHeight: '90%',
+        borderRadius: '8px',
+        boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
+        cursor: 'default'
+      }}
+    />
+    
+    {/* Optional Close Button */}
+    <button 
+      onClick={() => setLightboxImage(null)}
+      style={{
+        position: 'absolute',
+        top: '20px',
+        right: '20px',
+        background: 'none',
+        border: 'none',
+        color: 'white',
+        fontSize: '2rem',
+        cursor: 'pointer'
+      }}
+    >
+      &times;
+    </button>
+  </div>
+)}
       </section>
     </>
   );

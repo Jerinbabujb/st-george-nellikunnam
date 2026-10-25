@@ -10,6 +10,7 @@ import { fileURLToPath } from 'url';
 import { ensureDb, readDb, writeDb, nextId } from './db.js';
 import prisma
  from './config/prisma.js';
+import cloudinary from './lib/cloudinary.js';
 await ensureDb();
 
 const app = express();
@@ -95,8 +96,9 @@ app.post('/api/auth/login', async (req, res) => {
 
 app.post('/api/add-members', async (req, res) => {
   try {
-    const { email, password, name, name_ml, phone, ward, roll_no, house, family } = req.body;
-    
+    const { email, password, name, name_ml, phone, ward, roll_no, house, family, image_url } = req.body;
+    let family_image=null;
+
     // 1. Validation
     if (!email || !password) {
       return res.status(400).json({ message: 'Email and password are required' });
@@ -106,6 +108,10 @@ app.post('/api/add-members', async (req, res) => {
     // Never store plain text passwords in the database
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    if(image_url){
+      const upload = await cloudinary.uploader.upload(image_url);
+      family_image= upload.secure_url;
+    }
    
 
     // 4. Database Creation 
@@ -119,7 +125,9 @@ app.post('/api/add-members', async (req, res) => {
         roll_no: roll_no || '',
         ward: ward || '', 
         house: house || '',
+        image_url:family_image||'',
         family: family ||[]
+        
       }
     });
 
@@ -153,6 +161,7 @@ app.get('/api/get-members',async(req,res)=>{
       },
       select:{
         id:true,
+        
         name:true,
         name_ml:true,
         email:true,
@@ -160,6 +169,7 @@ app.get('/api/get-members',async(req,res)=>{
         roll_no:true,
         ward:true,
         house:true,
+        image_url:true,
         family:true
       }
     })

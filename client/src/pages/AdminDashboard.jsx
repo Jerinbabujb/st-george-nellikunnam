@@ -21,7 +21,7 @@ export default function AdminDashboard() {
   const [form, setForm] = useState(empty.announcements);
   const [editId, setEditId] = useState(null);
   const [members, setMembers] = useState([]);
-  const [memberForm, setMemberForm] = useState({ name: '', name_ml: '', email: '', phone: '', ward: '', house: '', password: 'Member@123', roll_no: '', family: [] });
+  const [memberForm, setMemberForm] = useState({ name: '', name_ml: '', email: '', phone: '', ward: '', house: '',image_url:'', password: 'Member@123', roll_no: '', family: [] });
   const [message, setMessage] = useState('');
 
   // const loadStats = () => request('/admin/stats').then(setStats);
@@ -104,7 +104,7 @@ export default function AdminDashboard() {
     e.preventDefault();
     await add_members(memberForm);
     setMemberForm({ name: '', name_ml: '', email: '', phone: '', ward: '', house: '', password: 'Member@123', roll_no: '', family: [] });
-    setMessage('Member account created.'); loadMembers(); loadStats();
+    setMessage('Member account created.'); loadStats();
   };
 
   const handleFamilyChange = (index, field, value) => {
@@ -270,6 +270,22 @@ export default function AdminDashboard() {
             </div>
 
             <label>{t('house')}<input value={memberForm.house || ''} onChange={e => setMemberForm({ ...memberForm, house: e.target.value })} /></label>
+            <label>{t('image')}<input type='file' accept='image/*' onChange={e=>{const file=e.target.files[0]
+              if(file){
+                const reader= new FileReader();
+                reader.onloadend=()=>{
+                  setMemberForm({...memberForm,image_url:reader.result});
+                }
+                reader.readAsDataURL(file);
+                  
+              } }}/></label>
+              {memberForm.image_url && (
+  <img 
+    src={memberForm.image_url} 
+    alt="Preview" 
+    style={{ width: '120px', height: '120px', objectFit: 'cover', marginTop: '10px' }} 
+  />
+)}
             <label>{t('password')}<input value={memberForm.password || ''} onChange={e => setMemberForm({ ...memberForm, password: e.target.value })} /></label>
 
             {/* --- DYNAMIC FAMILY SECTION --- */}
